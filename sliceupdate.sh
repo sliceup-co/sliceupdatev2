@@ -23,6 +23,15 @@
 
 
 
-
+	sudo systemctl stop slicemaster.service
+	sudo cp files/sourcedb.sql /opt/sliceup/executables/db_migration/sourcedb.sql
+	sudo -i -u postgres psql -c "DROP DATABASE sliceup"
+	sudo -i -u postgres psql -c "CREATE DATABASE sliceup"
+	sudo -i -u postgres psql sliceup < /opt/sliceup/executables/db_migration/sourcedb.sql
+	sudo rm /opt/sliceup/executables/log-lines-proc-1.0.jar /opt/sliceup/executables/db-cleaner.jar
+	sudo cp files/log-lines-proc-1.0.jar files/db-cleaner.jar files/user-client-1.0.jar /opt/sliceup/executables/
+	sudo systemctl start slicemaster.service
+	
+	echo "Update complete."
 
 
