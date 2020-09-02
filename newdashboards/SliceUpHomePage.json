@@ -1,0 +1,1120 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "limit": 100,
+        "name": "Annotations & Alerts",
+        "showIn": 0,
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": 35,
+  "iteration": 1599078269789,
+  "links": [],
+  "panels": [
+    {
+      "aliasColors": {
+        "sum": "dark-purple"
+      },
+      "bars": true,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "SliceUp",
+      "decimals": 1,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 4,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "hiddenSeries": false,
+      "id": 2,
+      "legend": {
+        "alignAsTable": false,
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": false,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 4,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "Critical Anomaly Score",
+          "color": "#C4162A",
+          "points": true,
+          "yaxis": 2
+        },
+        {
+          "alias": "# of Logs",
+          "color": "#8F3BB8",
+          "yaxis": 1
+        },
+        {
+          "alias": "Important Anomaly Score",
+          "color": "#F2CC0C",
+          "points": true,
+          "yaxis": 2
+        },
+        {
+          "alias": "Low Anomaly Score",
+          "color": "#56A64B",
+          "points": true,
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  start_time /1000 AS \"time\",\n  sum as \"# of Logs\"\nFROM logs_over_time\nORDER BY 1",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "sum"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "logs_over_time",
+          "timeColumn": "start_time",
+          "timeColumnType": "int8",
+          "where": []
+        },
+        {
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  start_time/1000 AS \"time\",\n  anomalous_score as \"Critical Anomaly Score\"\nFROM anomaly_host_detail\nwhere anomalous_score > 6\ngroup by start_time, anomalous_score\nORDER BY start_time\n",
+          "refId": "B",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  start_time/1000 AS \"time\",\n  sum (anomalous_score) as \"Important Anomaly Score\"\nFROM anomaly_host_detail\nwhere anomalous_score > 3.7 and anomalous_score < 6\ngroup by start_time\nORDER BY start_time\n",
+          "refId": "C",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  start_time/1000 AS \"time\",\n  sum (anomalous_score) as \"Low Anomaly Score\"\nFROM anomaly_host_detail\nwhere anomalous_score < 3.7\ngroup by start_time\nORDER BY start_time\n",
+          "refId": "D",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Logs and Anomalies Over Time",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "transparent": true,
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "# of Logs",
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "decimals": 1,
+          "format": "short",
+          "label": "Anomaly Score",
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "datasource": "SliceUp",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "center",
+            "displayMode": "auto"
+          },
+          "links": [
+            {
+              "title": "Show Anomaly Details",
+              "url": "/d/54jMxvNGk/template-detail-mike?var-template_table=${__data.fields[table_name]}&var-template_version=${__data.fields[version]}&var-template_id=${__data.fields[id]}&${__url_time_range}"
+            }
+          ],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-purple",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "template"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 554
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "avg"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 38
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "from": "10",
+                    "id": 0,
+                    "operator": "",
+                    "text": ".7",
+                    "to": "20",
+                    "type": 2
+                  },
+                  {
+                    "from": "21",
+                    "id": 1,
+                    "operator": "",
+                    "text": "1.5",
+                    "to": "30",
+                    "type": 2
+                  },
+                  {
+                    "from": "31",
+                    "id": 2,
+                    "operator": "",
+                    "text": "2.3",
+                    "to": "40",
+                    "type": 2,
+                    "value": "31"
+                  },
+                  {
+                    "from": "41",
+                    "id": 3,
+                    "operator": "",
+                    "text": "3.2",
+                    "to": "50",
+                    "type": 2
+                  },
+                  {
+                    "from": "51",
+                    "id": 4,
+                    "operator": "",
+                    "text": "3.9",
+                    "to": "60",
+                    "type": 2
+                  },
+                  {
+                    "from": "61",
+                    "id": 5,
+                    "operator": "",
+                    "text": "3.9",
+                    "to": "80",
+                    "type": 2,
+                    "value": ""
+                  },
+                  {
+                    "from": "81",
+                    "id": 6,
+                    "operator": "",
+                    "text": "4.2",
+                    "to": "10000",
+                    "type": 2,
+                    "value": ""
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "max"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 65
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "#EAB839",
+                      "value": 0.5
+                    },
+                    {
+                      "color": "semi-dark-red",
+                      "value": 0.75
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "from": "88",
+                    "id": 0,
+                    "operator": "",
+                    "text": "6.8",
+                    "to": "2000",
+                    "type": 2
+                  },
+                  {
+                    "from": "70",
+                    "id": 1,
+                    "operator": "",
+                    "text": "4.4",
+                    "to": "87",
+                    "type": 2
+                  },
+                  {
+                    "from": "45",
+                    "id": 2,
+                    "operator": "",
+                    "text": "3.9",
+                    "to": "69",
+                    "type": 2
+                  },
+                  {
+                    "from": "30",
+                    "id": 3,
+                    "operator": "",
+                    "text": "3.4",
+                    "to": "44",
+                    "type": 2,
+                    "value": ""
+                  },
+                  {
+                    "from": "18",
+                    "id": 4,
+                    "operator": "",
+                    "text": "2.9",
+                    "to": "29",
+                    "type": 2
+                  },
+                  {
+                    "from": "10",
+                    "id": 5,
+                    "operator": "",
+                    "text": "2.3",
+                    "to": "17",
+                    "type": 2,
+                    "value": "10"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "count"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 63
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "id"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "time_window_id"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "table_name"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 24,
+        "x": 0,
+        "y": 4
+      },
+      "id": 10,
+      "links": [],
+      "maxDataPoints": 1,
+      "options": {
+        "series_index": 0,
+        "wordCloudOptions": {
+          "deterministic": true,
+          "enableTooltip": true,
+          "fontFamily": "arial",
+          "fontSizes": [
+            15,
+            80
+          ],
+          "padding": 1,
+          "rotationAngles": [
+            0,
+            0
+          ],
+          "rotations": 2,
+          "scale": "sqrt",
+          "spiral": "archimedean",
+          "transitionDuration": 800
+        }
+      },
+      "pluginVersion": "7.0.4",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "table_name",
+          "rawQuery": true,
+          "rawSql": "SELECT word_sentiment AS \"Tag/Words\",\r\n       sum(word_contribution) AS \"Count\"\r\nFROM word_scores_by_time_window_and_template\r\nJOIN time_windows ON word_scores_by_time_window_and_template.time_window_id = time_windows.id\r\nWHERE word_contribution > 0\r\n    AND time_windows.start_time BETWEEN $__from AND $__to\r\n    AND word_scores_by_time_window_and_template.template_id LIKE '$Log_Template%'\r\nGROUP BY word_sentiment;",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "sum"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "template_count",
+          "timeColumn": "start_time",
+          "timeColumnType": "int8",
+          "where": []
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "magnesium-wordcloud-panel"
+    },
+    {
+      "datasource": "SliceUp",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null
+          },
+          "links": [
+            {
+              "title": "Load Anomaly Details",
+              "url": "/d/wf5pdkHNa/sliceuphomepage?orgId=1&var-Log_Template=${__data.fields[Template]}&var-Ver=${__data.fields[Version]}&var-LogTempLoad=${__data.fields[Template]}&${__url_time_range}"
+            }
+          ],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "semi-dark-green",
+                "value": null
+              },
+              {
+                "color": "semi-dark-yellow",
+                "value": 3
+              },
+              {
+                "color": "semi-dark-red",
+                "value": 6
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Criticality"
+            },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
+              },
+              {
+                "id": "custom.width",
+                "value": 132
+              },
+              {
+                "id": "custom.align",
+                "value": "center"
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "from": "6",
+                    "id": 0,
+                    "operator": "",
+                    "text": "HIGH",
+                    "to": "1000000",
+                    "type": 2,
+                    "value": ""
+                  },
+                  {
+                    "from": "3",
+                    "id": 1,
+                    "operator": "",
+                    "text": "MEDIUM",
+                    "to": "5.99999",
+                    "type": 2
+                  },
+                  {
+                    "from": "0",
+                    "id": 2,
+                    "operator": "",
+                    "text": "LOW",
+                    "to": "2.99999",
+                    "type": 2
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Template"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 176
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Version"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 72
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Occurrences"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 100
+              },
+              {
+                "id": "custom.align",
+                "value": "center"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Most Recent"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 174
+              },
+              {
+                "id": "unit",
+                "value": "dateTimeAsUS"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 11,
+        "x": 0,
+        "y": 8
+      },
+      "id": 8,
+      "options": {
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "7.0.4",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "hide": false,
+          "metricColumn": "unit_name",
+          "rawQuery": true,
+          "rawSql": "select\r\nmax_start_time as \"Most Recent\",\r\nmax_anomalous_score as \"Criticality\",\r\ntime_window_count as \"Occurrences\",\r\ntemplate_id as \"Template\",\r\ntemplate_version as \"Version\"\r\nFrom anom_highest_contrib_template\r\nwhere max_start_time BETWEEN $__from AND $__to\r\norder by \"Criticality\" DESC;",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "anomalous"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "anomalies_by_host",
+          "timeColumn": "start_time",
+          "timeColumnType": "int8",
+          "where": []
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Anomalies by Highest Contributing Log Template",
+      "transparent": true,
+      "type": "table"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 3,
+        "x": 11,
+        "y": 8
+      },
+      "id": 14,
+      "options": {
+        "showHeader": true
+      },
+      "pluginVersion": "7.0.4",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select \nanomaly_host_detail.unit_name as \"Host\"\nFROM word_scores_by_time_window_and_template\nJOIN anomaly_host_detail ON anomaly_host_detail.id = time_window_id\nWHERE word_contribution > 0 and word_scores_by_time_window_and_template.template_id = '$LogTempLoad' and word_scores_by_time_window_and_template.template_version = '$Ver'\nGROUP BY anomaly_host_detail.unit_name;",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Hosts",
+      "type": "table"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null,
+            "displayMode": "auto"
+          },
+          "links": [
+            {
+              "title": "",
+              "url": "d/VeYlcTSHa/time-window-template-details?&var-time_window_id=${__data.fields[Code]}&var-template_version=${__data.fields[Version]}&var-template_id=${__data.fields[Template]}&${__url_time_range}"
+            }
+          ],
+          "mappings": [],
+          "noValue": "Click Anomaly to Show List",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 3
+              },
+              {
+                "color": "semi-dark-red",
+                "value": 6
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Code"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 80
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Full Anomaly Time Details",
+                    "url": "/d/GGU0VuNMs/anomaly-detail-for-a-time-windows?var-time_window_id=${__data.fields[Code]}&${__url_time_range}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Criticality"
+            },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
+              },
+              {
+                "id": "custom.width",
+                "value": 104
+              },
+              {
+                "id": "custom.align",
+                "value": "center"
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "from": "0",
+                    "id": 0,
+                    "operator": "",
+                    "text": "LOW",
+                    "to": "2.99999",
+                    "type": 2
+                  },
+                  {
+                    "from": "3",
+                    "id": 1,
+                    "operator": "",
+                    "text": "MEDIUM",
+                    "to": "5.9999",
+                    "type": 2
+                  },
+                  {
+                    "from": "6",
+                    "id": 2,
+                    "operator": "",
+                    "text": "HIGH",
+                    "to": "1000000",
+                    "type": 2
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Version"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 70
+              },
+              {
+                "id": "custom.align",
+                "value": "center"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Anomaly Time"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeAsUS"
+              },
+              {
+                "id": "custom.width",
+                "value": 170
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Template"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 167
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 10,
+        "x": 14,
+        "y": 8
+      },
+      "id": 12,
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Criticality"
+          }
+        ]
+      },
+      "pluginVersion": "7.0.4",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT \r\n\"Anomaly Time\",\r\ntime_window_id as \"Code\",\r\ntemplate_id as \"Template\",\r\ntemplate_version as \"Version\",\r\nanomalous_score as \"Criticality\"\r\nFROM anom_detail_list \r\nWHERE \"Anomaly Time\" BETWEEN $__from AND $__to and template_id = '$LogTempLoad' and template_version = '$Ver';",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Anomaly Detail List",
+      "type": "table"
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 25,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": "%",
+          "value": "%"
+        },
+        "hide": 2,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "Log_Template",
+        "options": [
+          {
+            "selected": false,
+            "text": "%",
+            "value": "%"
+          }
+        ],
+        "query": "%",
+        "queryValue": "%",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "isNone": true,
+          "selected": false,
+          "text": "None",
+          "value": ""
+        },
+        "datasource": "SliceUp",
+        "definition": "SELECT \n       template_id As \"Template\",\n       MAX(start_time) AS \"Most Recent\",\n       MAX(anomalous_score) AS \"Criticality\",\n       COUNT(time_window_id) AS \"Occurrences\",\n       template_version AS \"Version\"\nFROM\n  (SELECT a.time_window_id,\n          b.template_id,\n          b.template_version,\n          a.anomalous_score,\n          a.start_time\n   FROM time_window_templates b\n   INNER JOIN\n     (SELECT time_window_id,\n             start_time,\n             anomalous_score,\n             MAX(sentiment_contribution)\n      FROM time_window_templates\n      INNER JOIN time_windows ON time_window_id = time_windows.id\n      WHERE time_windows.anomalous = TRUE and start_time BETWEEN $__from AND $__to\n      GROUP BY time_window_id,\n               start_time,\n               anomalous_score\n      ORDER BY time_window_id) a ON b.sentiment_contribution = a.max\n   AND b.time_window_id = a.time_window_id) c\nGROUP BY c.template_id,\n         c.template_version\nORDER BY \"Criticality\" DESC;",
+        "hide": 2,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "LogTempLoad",
+        "options": [],
+        "query": "SELECT \n       template_id As \"Template\",\n       MAX(start_time) AS \"Most Recent\",\n       MAX(anomalous_score) AS \"Criticality\",\n       COUNT(time_window_id) AS \"Occurrences\",\n       template_version AS \"Version\"\nFROM\n  (SELECT a.time_window_id,\n          b.template_id,\n          b.template_version,\n          a.anomalous_score,\n          a.start_time\n   FROM time_window_templates b\n   INNER JOIN\n     (SELECT time_window_id,\n             start_time,\n             anomalous_score,\n             MAX(sentiment_contribution)\n      FROM time_window_templates\n      INNER JOIN time_windows ON time_window_id = time_windows.id\n      WHERE time_windows.anomalous = TRUE and start_time BETWEEN $__from AND $__to\n      GROUP BY time_window_id,\n               start_time,\n               anomalous_score\n      ORDER BY time_window_id) a ON b.sentiment_contribution = a.max\n   AND b.time_window_id = a.time_window_id) c\nGROUP BY c.template_id,\n         c.template_version\nORDER BY \"Criticality\" DESC;",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "1",
+          "value": "1"
+        },
+        "hide": 2,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "Ver",
+        "options": [
+          {
+            "selected": true,
+            "text": "1",
+            "value": "1"
+          }
+        ],
+        "query": "1",
+        "queryValue": "1",
+        "skipUrlSync": false,
+        "type": "custom"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ]
+  },
+  "timezone": "browser",
+  "title": "SliceUpHomePage",
+  "uid": "wf5pdkHNa",
+  "version": 10
+}
